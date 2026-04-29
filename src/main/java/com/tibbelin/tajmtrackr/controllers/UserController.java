@@ -1,6 +1,5 @@
 package com.tibbelin.tajmtrackr.controllers;
 
-import java.net.Authenticator;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
