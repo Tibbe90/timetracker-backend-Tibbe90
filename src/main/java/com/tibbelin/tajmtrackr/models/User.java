@@ -1,17 +1,13 @@
 package com.tibbelin.tajmtrackr.models;
 
 import java.time.LocalDate;
-import java.util.Collection;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.tibbelin.tajmtrackr.enums.Roles;
 
 @Document(collection = "users")
-public class User implements UserDetails {
+public class User {
 
     @Id
     private String id;
@@ -39,10 +35,6 @@ public class User implements UserDetails {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
@@ -77,39 +69,13 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
-    }
-
-    @Override
     public String getUsername() {
         return username;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
-        return true;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        return true;
-    }
-
+    
 }
