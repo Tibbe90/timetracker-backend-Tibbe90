@@ -10,13 +10,15 @@ public class Category {
     
     @Id
     private String id;
+    private String userId;
     private String categoryName;
     private String color;
 
     public Category() {}
 
-    public Category(String id, String categoryName, String color) {
+    public Category(String id, String categoryName, String color, String userId) {
         this.id = id;
+        this.userId = userId;
         this.categoryName = categoryName;
         this.color = color;
     }
@@ -38,6 +40,14 @@ public class Category {
     }
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     

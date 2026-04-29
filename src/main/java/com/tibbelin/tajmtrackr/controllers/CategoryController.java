@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +34,6 @@ public class CategoryController {
     @GetMapping("/my-categories")
     public ResponseEntity<List<Category>> getPersonalCategories(Authentication authentication) {
         //User user = userService.findByUsername(authentication.getName)
-        return null;
-    }
-
-    @GetMapping("/category/{id}")
-    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
         return null;
     }
 

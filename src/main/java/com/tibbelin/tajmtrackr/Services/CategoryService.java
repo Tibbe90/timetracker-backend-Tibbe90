@@ -1,0 +1,40 @@
+package com.tibbelin.tajmtrackr.services;
+
+import java.util.List;
+
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import com.tibbelin.tajmtrackr.models.Category;
+import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
+
+@Service
+public class CategoryService {
+    private final MongoOperations mongoOperations;
+
+    public CategoryService(MongoOperations mongoOperations) {
+        this.mongoOperations = mongoOperations;
+    }
+
+    public Category newCategory(Category category) {
+        Query query = Query.query(Criteria.where("categoryName").is(category.getCategoryName()));
+        if (mongoOperations.exists(query, Category.class)) {
+            throw new IllegalArgumentException("This category has already been created");
+        }
+        return mongoOperations.insert(category);
+    }
+
+    public List<Category> getMyCategories(String userId) {
+        Query query = Query.query(Criteria.where("userId").is(userId));
+        return mongoOperations.find(query, Category.class);
+    }
+
+    public void updateCategoryName(UpdateCategoryDTO updateName, String id) {
+        Query query = Query.query(Criteria.where("id").is(id));
+        Update update = Update.update("categoryName", updateName.getNewName());
+        mongoOperations.updateFirst(query, update, Category.class);
+    }
+}
