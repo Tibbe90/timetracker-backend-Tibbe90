@@ -20,13 +20,12 @@ public class User {
     public User() {
     }
 
-    public User(String id, String username, String email, String password, LocalDate createdDate, Roles role) {
+    public User(String id, String username, String email, String password, LocalDate createdDate) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.createdDate = createdDate;
-        this.role = role;
+        this.createdDate = LocalDate.now();
     }
 
     public String getId() {

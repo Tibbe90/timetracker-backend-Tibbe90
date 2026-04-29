@@ -11,21 +11,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tibbelin.tajmtrackr.Services.UserService;
 import com.tibbelin.tajmtrackr.models.User;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/user")
 public class UserController {
+    UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user, Authentication authentication) {
-        return null;
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     @GetMapping("/admin") 
     public ResponseEntity<List<User>> getAllUsers(Authentication authentication){
-        return null;
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     /* USE THIS IF CONSIDERING A CUSTOM LOGIN, CURRENTLY USING BUILT IN /login
