@@ -1,8 +1,6 @@
 package com.tibbelin.tajmtrackr.enums;
 
-public class Roles {
-    enum Role {
+public enum Roles {
         USER,
         ADMIN
     }
-}
