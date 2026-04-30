@@ -2,11 +2,9 @@ package com.tibbelin.tajmtrackr.enums;
 
 // https://www.w3schools.com/java/java_enums.asp
 
-public class TimerStatus {
-    enum Status {
+public enum TimerStatus {
         STARTED,
         PAUSED,
         STOPPED,
         CANCELLED
     }
-}

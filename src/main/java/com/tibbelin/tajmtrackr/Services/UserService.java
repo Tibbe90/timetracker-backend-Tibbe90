@@ -1,4 +1,4 @@
-package com.tibbelin.tajmtrackr.services;
+package com.tibbelin.tajmtrackr.Services;
 
 import java.util.List;
 
