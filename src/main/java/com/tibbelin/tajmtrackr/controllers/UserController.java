@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tibbelin.tajmtrackr.Services.UserService;
 import com.tibbelin.tajmtrackr.models.User;
+import com.tibbelin.tajmtrackr.services.UserService;
 
 @RestController
 @CrossOrigin

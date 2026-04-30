@@ -1,9 +1,11 @@
 package com.tibbelin.tajmtrackr.models;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserDTO implements UserDetails {
@@ -13,11 +15,14 @@ public class UserDTO implements UserDetails {
     public UserDTO(User user) {
         this.user = user;
     }
+
+    public String getUserId() {
+        return user.getId();
+    }
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override

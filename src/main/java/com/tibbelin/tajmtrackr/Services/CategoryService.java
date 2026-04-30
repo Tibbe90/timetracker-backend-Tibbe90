@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.tibbelin.tajmtrackr.models.Category;
 import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
+import com.tibbelin.tajmtrackr.models.User;
 
 @Service
 public class CategoryService {
@@ -19,10 +20,12 @@ public class CategoryService {
         this.mongoOperations = mongoOperations;
     }
 
-    public Category newCategory(Category category) {
-        Query query = Query.query(Criteria.where("categoryName").is(category.getCategoryName()));
+    public Category newCategory(Category category, User user) {
+        category.setUserId(user.getId());
+        Query query = Query.query(Criteria.where("categoryName").is(category.getCategoryName())
+        .and("userId").is(category.getUserId()));
         if (mongoOperations.exists(query, Category.class)) {
-            throw new IllegalArgumentException("This category has already been created");
+            throw new IllegalArgumentException("You already have this category");
         }
         return mongoOperations.insert(category);
     }
