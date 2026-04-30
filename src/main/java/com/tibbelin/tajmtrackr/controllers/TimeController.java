@@ -1,5 +1,7 @@
 package com.tibbelin.tajmtrackr.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,6 +47,11 @@ public class TimeController {
 
     @GetMapping("/status")
     public ResponseEntity<TimeTracker> getCurrentTimer(){
+        return null;
+    }
+    
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
         return null;
     }
 

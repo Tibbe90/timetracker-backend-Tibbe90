@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
+import com.tibbelin.tajmtrackr.models.User;
+import com.tibbelin.tajmtrackr.services.CategoryService;
+import com.tibbelin.tajmtrackr.services.UserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 /*
@@ -26,21 +28,24 @@ https://docs.spring.io/spring-security/reference/servlet/authentication/architec
 @RestController
 @RequestMapping("/api")
 public class CategoryController {
+    private final CategoryService categoryService;
+    private final UserService userService;
+
+    public CategoryController(CategoryService categoryService, UserService userService) {
+        this.categoryService = categoryService;
+        this.userService = userService;
+    }
     
     @PostMapping("/category")
     public ResponseEntity<Category> newCategory(@RequestBody Category category, Authentication authentication) {
-        return null;
+        User user = userService.getUserByName(authentication.getName());
+        return ResponseEntity.ok(categoryService.newCategory(category, user));
     }
 
     @GetMapping("/my-categories")
     public ResponseEntity<List<Category>> getPersonalCategories(Authentication authentication) {
-        //User user = userService.findByUsername(authentication.getName)
-        return null;
-    }
-
-    @GetMapping("/category/{id}")
-    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
-        return null;
+        User user = userService.getUserByName(authentication.getName());
+        return ResponseEntity.ok(categoryService.getMyCategories(user.getId()));
     }
 
     //Extra function, may be unused in V1
@@ -50,7 +55,8 @@ public class CategoryController {
     }
 
     @PatchMapping("/category/{id}")
-    public ResponseEntity<Category> updateCategoryName(@PathVariable String id, @RequestBody UpdateCategoryDTO categoryDTO, Authentication authentication) {
-        return null;
+    public ResponseEntity<Category> updateCategoryName(@PathVariable String id, @RequestBody UpdateCategoryDTO categoryDTO) {
+        categoryService.updateCategoryName(categoryDTO, id);
+        return ResponseEntity.noContent().build();
     }
 }

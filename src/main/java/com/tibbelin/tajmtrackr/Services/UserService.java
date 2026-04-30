@@ -1,4 +1,4 @@
-package com.tibbelin.tajmtrackr.Services;
+package com.tibbelin.tajmtrackr.services;
 
 import java.util.List;
 
@@ -36,5 +36,10 @@ public class UserService {
 
     public List<User> getAllUsers() {
        return mongoOperations.findAll(User.class);
+    }
+
+    public User getUserByName(String name) {
+        Query query = Query.query(Criteria.where("username").is(name));
+        return mongoOperations.findOne(query, User.class);
     }
 }
