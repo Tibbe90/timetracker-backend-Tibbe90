@@ -1,7 +1,7 @@
 package com.tibbelin.tajmtrackr.models;
 
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,21 +25,16 @@ public class TimeTracker {
     private String Id;
     private String userId;
     private String categoryId;
-    private Instant timeStart;
-    private Instant timeStop;
+    private LocalTime timeStart;
+    private LocalTime timeStop;
     private Long duration;
     private TimerStatus status;
     private LocalDate creationDate;
 
-    public TimeTracker(String id, String userId, String categoryId, Instant timeStart, Instant timeStop, Long duration,
-            TimerStatus status) {
-        Id = id;
-        this.userId = userId;
-        this.categoryId = categoryId;
-        this.timeStart = timeStart;
-        this.timeStop = timeStop;
-        this.duration = duration;
-        this.status = status;
+    public TimeTracker(String id) {
+        this.Id = id;
+        this.timeStart = LocalTime.now();
+        this.status = TimerStatus.STARTED;
         this.creationDate = LocalDate.now();
     }
 
@@ -69,19 +64,19 @@ public class TimeTracker {
         this.status = status;
     }
 
-    public Instant getTimeStart() {
+    public LocalTime getTimeStart() {
         return timeStart;
     }
 
-    public void setTimeStart(Instant timeStart) {
+    public void setTimeStart(LocalTime timeStart) {
         this.timeStart = timeStart;
     }
 
-    public Instant getTimeStop() {
+    public LocalTime getTimeStop() {
         return timeStop;
     }
 
-    public void setTimeStop(Instant timeStop) {
+    public void setTimeStop(LocalTime timeStop) {
         this.timeStop = timeStop;
     }
 
