@@ -12,15 +12,13 @@ public class Category {
     private String id;
     private String userId;
     private String categoryName;
-    private String color;
 
     public Category() {}
 
-    public Category(String id, String categoryName, String color, String userId) {
+    public Category(String id, String categoryName, String userId) {
         this.id = id;
         this.userId = userId;
         this.categoryName = categoryName;
-        this.color = color;
     }
     
     public String getId() {
@@ -34,12 +32,6 @@ public class Category {
     }
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
-    }
-    public String getColor() {
-        return color;
-    }
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public String getUserId() {

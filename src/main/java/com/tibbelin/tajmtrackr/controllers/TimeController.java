@@ -77,14 +77,18 @@ public class TimeController {
     }
     
     @GetMapping("/category/{id}")
-    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
-        return null;
+    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id, Authentication authentication) {
+        User user = userService.getUserByName(authentication.getName());
+        return ResponseEntity.ok(timeService.getTrackersByCategory(user.getId(), id));
     }
 
+    /*
+    Unsure if necessary
     @GetMapping("/{id}")
     public ResponseEntity<TimeTracker> getTimerById(@PathVariable String id) {
         return null;
     }
+    */
 
     //Extra function, will possibly be unused in V1
     @DeleteMapping("/{id}")

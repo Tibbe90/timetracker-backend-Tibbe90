@@ -2,6 +2,7 @@ package com.tibbelin.tajmtrackr.Services;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -80,6 +81,13 @@ public class TimeService {
         Query findTimer = Query.query(Criteria.where("status").is(queryArray).and("userId").is(user.getId()));
         return mongoOperations.findOne(findTimer, TimeTracker.class);
     }
+
+    public List<TimeTracker> getTrackersByCategory(String userId, String categoryId) {
+        Query findCategory = Query.query(Criteria.where("categoryId").is(categoryId).and("userId").is(userId));
+        return mongoOperations.find(findCategory, TimeTracker.class);
+    }
+
+
 
     // https://www.geeksforgeeks.org/java/localtime-until-method-in-java-with-examples/
     public void timeCalculations(TimeTracker timeTracker, String operation, User user) {
