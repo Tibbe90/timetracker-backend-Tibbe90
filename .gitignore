@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 Reflektion-Dokumentation.docx
 ~$flektion-Dokumentation.docx
+**/.env
 
 ### STS ###
 .apt_generated
