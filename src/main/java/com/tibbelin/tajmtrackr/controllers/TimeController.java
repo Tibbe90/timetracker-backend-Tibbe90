@@ -3,7 +3,6 @@ package com.tibbelin.tajmtrackr.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.Services.TimeService;
 import com.tibbelin.tajmtrackr.Services.UserService;
-import com.tibbelin.tajmtrackr.models.Category;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
 
@@ -36,50 +34,49 @@ public class TimeController {
         this.userService = userService;
     }
     
-    @PostMapping("/start")
-    public ResponseEntity<TimeTracker> startTimer(@RequestBody TimeTracker timeTracker, @RequestBody Category category, Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
-        return ResponseEntity.ok(timeService.startTime(timeTracker, user, category));
+    @PostMapping("/{id}/{categoryId}/start")
+    public ResponseEntity<TimeTracker> startTimer(@RequestBody TimeTracker timeTracker, @PathVariable String categoryId, @PathVariable String id) {
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(timeService.startTime(timeTracker, user, categoryId));
     }
 
-    @PostMapping("/pause")
-    public ResponseEntity<TimeTracker> pauseTimer(Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @PostMapping("/{id}/pause")
+    public ResponseEntity<TimeTracker> pauseTimer(@PathVariable String id) {
+        User user = userService.getUserById(id);
         timeService.pauseTime(user);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/resume")
-    public ResponseEntity<TimeTracker> resumeTimer(Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @PostMapping("/{id}/resume")
+    public ResponseEntity<TimeTracker> resumeTimer(@PathVariable String id) {
+        User user = userService.getUserById(id);
         timeService.resumeTimer(user);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/stop")
-    public ResponseEntity<TimeTracker> stopTimer(Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @PostMapping("/{id}/stop")
+    public ResponseEntity<TimeTracker> stopTimer(@PathVariable String id) {
+        User user = userService.getUserById(id);
         timeService.stopTimer(user);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/cancel")
-    public ResponseEntity<TimeTracker> cancelTimer(Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<TimeTracker> cancelTimer(@PathVariable String id) {
+        User user = userService.getUserById(id);
         timeService.cancelTimer(user);
         return ResponseEntity.status(200).build();
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<TimeTracker> getCurrentTimer(Authentication authentication){
-        User user = userService.getUserByName(authentication.getName());
+    @GetMapping("/{id}/status")
+    public ResponseEntity<TimeTracker> getCurrentTimer(@PathVariable String id){
+        User user = userService.getUserById(id);
         return ResponseEntity.ok(timeService.getActiveTimer(user));
     }
     
     @GetMapping("/category/{id}")
-    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id, Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
-        return ResponseEntity.ok(timeService.getTrackersByCategory(user.getId(), id));
+    public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
+        return ResponseEntity.ok(timeService.getTrackersByCategory(id));
     }
 
     /*

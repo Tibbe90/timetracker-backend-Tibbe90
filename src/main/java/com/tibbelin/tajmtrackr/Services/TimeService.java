@@ -31,10 +31,10 @@ public class TimeService {
         this.mongoOperations = mongoOperations;
     }
 
-    public TimeTracker startTime(TimeTracker newTracker, User user, Category category) {
+    public TimeTracker startTime(TimeTracker newTracker, User user, String categoryId) {
         TimeTracker timeTracker = newTracker;
         timeTracker.setUserId(user.getId());
-        timeTracker.setCategoryId(category.getId());
+        timeTracker.setCategoryId(categoryId);
         Query query = Query.query(Criteria.where("status").is(queryArray).and("userId").is(user.getId()));
         if (mongoOperations.exists(query, TimeTracker.class)) {
             throw new IllegalStateException("a timer is already active");
@@ -82,8 +82,8 @@ public class TimeService {
         return mongoOperations.findOne(findTimer, TimeTracker.class);
     }
 
-    public List<TimeTracker> getTrackersByCategory(String userId, String categoryId) {
-        Query findCategory = Query.query(Criteria.where("categoryId").is(categoryId).and("userId").is(userId));
+    public List<TimeTracker> getTrackersByCategory(String categoryId) {
+        Query findCategory = Query.query(Criteria.where("categoryId").is(categoryId));
         return mongoOperations.find(findCategory, TimeTracker.class);
     }
 
