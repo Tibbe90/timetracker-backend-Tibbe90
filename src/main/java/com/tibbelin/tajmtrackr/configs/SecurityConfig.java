@@ -18,7 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  *****************************************************************************/
 
 @Configuration
-@EnableMethodSecurity
 public class SecurityConfig {
 
     private final SuccessHandler successHandler;
@@ -35,15 +34,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
-                .cors(Customizer.withDefaults())
-                 .formLogin((form) -> form
-                 .successHandler(successHandler)
-                 .failureHandler(failureHandler))
-                .logout(Customizer.withDefaults());
+                .cors(Customizer.withDefaults());
+
+                //  .formLogin((form) -> form
+                //  .successHandler(successHandler)
+                //  .failureHandler(failureHandler))
+                // .logout(Customizer.withDefaults());
         return http.build();
     }
 
-    // NOT USED
+//     // NOT USED
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -52,7 +52,7 @@ public class SecurityConfig {
 @Bean
 public UrlBasedCorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173", "http://localhost:5173/"));
+    configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173", "http://localhost:5173", "https://tajmtrackr-xjnyh.ondigitalocean.app"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);

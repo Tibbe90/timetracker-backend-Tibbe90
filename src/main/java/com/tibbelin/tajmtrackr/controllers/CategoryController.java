@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 Info om Authentication
 https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html
 */
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin
 @RestController
@@ -36,21 +37,21 @@ public class CategoryController {
         this.userService = userService;
     }
     
-    @PostMapping("/category")
-    public ResponseEntity<Category> newCategory(@RequestBody Category category, Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @PostMapping("/{id}/category")
+    public ResponseEntity<Category> newCategory(@RequestBody Category category, @PathVariable String id) {
+        User user = userService.getUserById(id);;
         return ResponseEntity.ok(categoryService.newCategory(category, user));
     }
 
-    @GetMapping("/my-categories")
-    public ResponseEntity<List<Category>> getPersonalCategories(Authentication authentication) {
-        User user = userService.getUserByName(authentication.getName());
+    @GetMapping("/{id}/my-categories")
+    public ResponseEntity<List<Category>> getPersonalCategories(@PathVariable String id) {
+        User user = userService.getUserById(id);
         return ResponseEntity.ok(categoryService.getMyCategories(user.getId()));
     }
 
     //Extra function, may be unused in V1
     @DeleteMapping("/category/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable String id, Authentication authentication) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
         return null;
     }
 

@@ -1,7 +1,9 @@
 package com.tibbelin.tajmtrackr.models;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,7 +12,7 @@ import com.tibbelin.tajmtrackr.enums.TimerStatus;
 
 /*
 Själva timern körs i frontend.
-Kör instant instället för LocalDateTime
+Kör instant i konstruktor för att säkerställa samma tid som Date.getTime() i react
 https://stackoverflow.com/questions/32437550/whats-the-difference-between-instant-and-localdatetime
 
 kollektionen innehåller ändå timeStart för att kunna återuppta en session som blivit avslutad
@@ -25,17 +27,19 @@ public class TimeTracker {
     private String Id;
     private String userId;
     private String categoryId;
-    private LocalTime timeStart;
-    private LocalTime timeStop;
+    private LocalDateTime timeStart;
+    private LocalDateTime timeStop;
     private Long duration;
     private TimerStatus status;
     private LocalDate creationDate;
 
-    public TimeTracker(String id) {
-        this.Id = id;
-        this.timeStart = LocalTime.now();
+    public TimeTracker(String userId, String categoryId, Instant timeStart) {
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.timeStart = LocalDateTime.ofInstant(timeStart, ZoneId.systemDefault());
         this.status = TimerStatus.STARTED;
         this.creationDate = LocalDate.now();
+        this.duration = 0L;
     }
 
     public TimeTracker() {}
@@ -64,19 +68,19 @@ public class TimeTracker {
         this.status = status;
     }
 
-    public LocalTime getTimeStart() {
+    public LocalDateTime getTimeStart() {
         return timeStart;
     }
 
-    public void setTimeStart(LocalTime timeStart) {
+    public void setTimeStart(LocalDateTime timeStart) {
         this.timeStart = timeStart;
     }
 
-    public LocalTime getTimeStop() {
+    public LocalDateTime getTimeStop() {
         return timeStop;
     }
 
-    public void setTimeStop(LocalTime timeStop) {
+    public void setTimeStop(LocalDateTime timeStop) {
         this.timeStop = timeStop;
     }
 

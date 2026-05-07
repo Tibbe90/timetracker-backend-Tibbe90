@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.Services.UserService;
@@ -25,7 +27,7 @@ public class UserController {
     }
     
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user, Authentication authentication) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.createUser(user));
     }
 
@@ -34,6 +36,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @PostMapping("/login/{username}") 
+    public ResponseEntity<User> getAllUsers(@PathVariable String username){
+        return ResponseEntity.ok(userService.getUserByName(username));
+    }
     /* USE THIS IF CONSIDERING A CUSTOM LOGIN, CURRENTLY USING BUILT IN /login
 
     @PostMapping("/login")

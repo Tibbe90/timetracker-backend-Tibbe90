@@ -3,8 +3,6 @@ package com.tibbelin.tajmtrackr.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-// Color enbart för att låta användaren påverka sitt UI
-
 @Document(collection = "categories")
 public class Category {
     
