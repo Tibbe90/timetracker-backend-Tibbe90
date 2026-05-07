@@ -1,10 +1,12 @@
 package com.tibbelin.tajmtrackr.Services;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.cglib.core.Local;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tibbelin.tajmtrackr.enums.TimerStatus;
+import com.tibbelin.tajmtrackr.models.Category;
+import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
 
@@ -28,9 +32,11 @@ https://www.mongodb.com/docs/drivers/java/sync/current/crud/update-documents/
 public class TimeService {
     
     private final MongoOperations mongoOperations;
+    private final CategoryService categoryService;
 
-    public TimeService(MongoOperations mongoOperations) {
+    public TimeService(MongoOperations mongoOperations, CategoryService categoryService) {
         this.mongoOperations = mongoOperations;
+        this.categoryService = categoryService;
     }
 
     public TimeTracker startTime(Instant instant, User user, String categoryId) {
@@ -95,10 +101,30 @@ public class TimeService {
         return mongoOperations.find(findCategory, TimeTracker.class);
     }
 
+    // https://www.mongodb.com/docs/manual/reference/operator/query/gte/?msockid=0021af1340436d161c1cb81e41146ca9
+    public List<CategoryHistoryDTO> getCategoryHistory(String userId) {
+        LocalDate last30Days = LocalDate.now().minusDays(30);
+        Query findDurations = Query.query(Criteria.where("userId").is(userId).and("creationDate").gte(last30Days));
+        List<TimeTracker> entries = mongoOperations.find(findDurations, TimeTracker.class);
+        List<CategoryHistoryDTO> categoryHistoryDTO = calculateDurations(entries, userId);
+        return categoryHistoryDTO;
+    }
 
+private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, String userId) {
+    List<Category> categories = categoryService.getMyCategories(userId);
+    List<CategoryHistoryDTO> categoryHistory = new ArrayList<>();
+    for (Category category : categories) {
+        Long getCategoryDuration = entries.stream()
+        .filter(entry -> category.getId().equals(entry.getCategoryId()))
+        .mapToLong(entry -> entry.getDuration())
+        .sum();
+        CategoryHistoryDTO categoryDuration = new CategoryHistoryDTO(category.getId(), category.getCategoryName(), getCategoryDuration);
+        categoryHistory.add(categoryDuration);
+        }
+        return categoryHistory;
+    }
 
     // https://www.geeksforgeeks.org/java/localtime-until-method-in-java-with-examples/
-
     public void timeCalculations(TimeTracker timeTracker, String operation, User user, Instant instant) {
         LocalDateTime start = timeTracker.getTimeStart();
         Update update;

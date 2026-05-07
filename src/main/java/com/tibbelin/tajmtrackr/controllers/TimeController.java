@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.Services.TimeService;
 import com.tibbelin.tajmtrackr.Services.UserService;
+import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
 
@@ -83,6 +84,12 @@ public class TimeController {
     public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
         return ResponseEntity.ok(timeService.getTrackersByCategory(id));
     }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<CategoryHistoryDTO>> getHistory(@PathVariable String id){
+        return ResponseEntity.ok(timeService.getCategoryHistory(id));
+    }
+
 
     /*
     Unsure if necessary
