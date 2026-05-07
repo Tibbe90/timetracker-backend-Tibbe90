@@ -1,9 +1,13 @@
 package com.tibbelin.tajmtrackr.Services;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tibbelin.tajmtrackr.enums.TimerStatus;
-import com.tibbelin.tajmtrackr.models.Category;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
 
@@ -25,24 +28,22 @@ https://www.mongodb.com/docs/drivers/java/sync/current/crud/update-documents/
 public class TimeService {
     
     private final MongoOperations mongoOperations;
-    private final String[] queryArray = {"STARTED", "PAUSED"};
 
     public TimeService(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
 
-    public TimeTracker startTime(TimeTracker newTracker, User user, String categoryId) {
-        TimeTracker timeTracker = newTracker;
-        timeTracker.setUserId(user.getId());
-        timeTracker.setCategoryId(categoryId);
-        Query query = Query.query(Criteria.where("status").is(queryArray).and("userId").is(user.getId()));
+    public TimeTracker startTime(Instant instant, User user, String categoryId) {
+        TimeTracker timeTracker = new TimeTracker(user.getId(), categoryId, instant);
+        Query query = Query.query(Criteria.where("status").in("STARTED", "PAUSED").and("userId").is(user.getId()));
         if (mongoOperations.exists(query, TimeTracker.class)) {
-            throw new IllegalStateException("a timer is already active");
+            mongoOperations.remove(query, TimeTracker.class);
+            throw new IllegalStateException("a timer is already active, removing it for you");
         }
         return mongoOperations.insert(timeTracker);
     }
 
-    public void pauseTime(User user) {
+    public void pauseTime(User user, Instant pauseTime) {
         Query checkForOutOfSync = Query.query(Criteria.where("status").is("PAUSED").and("userId").is(user.getId()));
         Query findTimer = Query.query(Criteria.where("status").is("STARTED").and("userId").is(user.getId()));
         // -----------------------------------------------------------
@@ -56,30 +57,37 @@ public class TimeService {
             */
         }
         TimeTracker timeTracker = mongoOperations.findOne(findTimer, TimeTracker.class);
-        timeCalculations(timeTracker, "pause", user);
+        timeCalculations(timeTracker, "pause", user, pauseTime);
     }
 
-    public void resumeTimer(User user) {
+    public void resumeTimer(User user, Instant resumeTime) {
         Query findTimer = Query.query(Criteria.where("status").is("PAUSED").and("userId").is(user.getId()));
         TimeTracker timeTracker = mongoOperations.findOne(findTimer, TimeTracker.class);
-        timeCalculations(timeTracker, "resume", user);
+        timeCalculations(timeTracker, "resume", user, resumeTime);
     }
 
-    public void stopTimer(User user) {
-        Query findTimer = Query.query(Criteria.where("status").is(queryArray).and("userId").is(user.getId()));
+    public void stopTimer(User user, Instant stopTime) {
+        Query findTimer = Query.query(Criteria.where("status").in("STARTED", "PAUSED").and("userId").is(user.getId()));
         TimeTracker timeTracker = mongoOperations.findOne(findTimer, TimeTracker.class);
-        timeCalculations(timeTracker, "stop", user);
+        if (timeTracker == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        timeCalculations(timeTracker, "stop", user, stopTime);
     }
 
     public void cancelTimer(User user) {
-        String[] cancelQuery = {TimerStatus.PAUSED.toString(), TimerStatus.STARTED.toString(), TimerStatus.STOPPED.toString()};
-        Query findTimer = Query.query(Criteria.where("status").is(cancelQuery).and("userId").is(user.getId()));
+       // String[] cancelQuery = {TimerStatus.PAUSED.toString(), TimerStatus.STARTED.toString(), TimerStatus.STOPPED.toString()};
+        Query findTimer = Query.query(Criteria.where("status").in("PAUSED", "STARTED").and("userId").is(user.getId()));
         mongoOperations.remove(findTimer, TimeTracker.class);
     }
 
     public TimeTracker getActiveTimer(User user) {
-        Query findTimer = Query.query(Criteria.where("status").is(queryArray).and("userId").is(user.getId()));
-        return mongoOperations.findOne(findTimer, TimeTracker.class);
+        Query findTimer = Query.query(Criteria.where("status").in("STARTED", "PAUSED").and("userId").is(user.getId()));
+        TimeTracker timeTracker = mongoOperations.findOne(findTimer, TimeTracker.class);
+        if (timeTracker == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return timeTracker;
     }
 
     public List<TimeTracker> getTrackersByCategory(String categoryId) {
@@ -90,32 +98,35 @@ public class TimeService {
 
 
     // https://www.geeksforgeeks.org/java/localtime-until-method-in-java-with-examples/
-    public void timeCalculations(TimeTracker timeTracker, String operation, User user) {
-        LocalTime start = timeTracker.getTimeStart();
+
+    public void timeCalculations(TimeTracker timeTracker, String operation, User user, Instant instant) {
+        LocalDateTime start = timeTracker.getTimeStart();
         Update update;
         TimerStatus findStatus;
 
         switch (operation) {
             case "pause":
-                LocalTime pause = LocalTime.now();
+                LocalDateTime pause = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 Long duration = start.until(pause, ChronoUnit.MILLIS);
                 update = Update.update("duration", duration)
                 .set("status", TimerStatus.PAUSED);
                 findStatus = TimerStatus.STARTED;
                 break;
             case "resume":
-                update = Update.update("timeStart", LocalTime.now())
+                update = Update.update("timeStart", LocalDateTime.now())
                 .set("status", TimerStatus.STARTED);
                 findStatus = TimerStatus.PAUSED;
                 break;
             case "stop":
-                LocalTime stop = LocalTime.now();
+                LocalDateTime stop = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 Long finalDuration = start.until(stop, ChronoUnit.MILLIS);
                 finalDuration += timeTracker.getDuration();
                 update = Update.update("duration", finalDuration)
                 .set("status", TimerStatus.STOPPED);
                 findStatus = TimerStatus.STARTED;
-                break;
+                Query findTimer = Query.query(Criteria.where("status").in("STARTED", "PAUSED").and("userId").is(user.getId()));
+                mongoOperations.updateFirst(findTimer, update, TimeTracker.class);
+                return;
 
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

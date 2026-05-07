@@ -1,5 +1,6 @@
 package com.tibbelin.tajmtrackr.controllers;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -35,30 +36,34 @@ public class TimeController {
     }
     
     @PostMapping("/{id}/{categoryId}/start")
-    public ResponseEntity<TimeTracker> startTimer(@RequestBody TimeTracker timeTracker, @PathVariable String categoryId, @PathVariable String id) {
+    public ResponseEntity<TimeTracker> startTimer(@RequestBody Long timeStart, @PathVariable String categoryId, @PathVariable String id) {
         User user = userService.getUserById(id);
-        return ResponseEntity.ok(timeService.startTime(timeTracker, user, categoryId));
+        Instant instant = Instant.ofEpochMilli(timeStart);
+        return ResponseEntity.ok(timeService.startTime(instant, user, categoryId));
     }
 
     @PostMapping("/{id}/pause")
-    public ResponseEntity<TimeTracker> pauseTimer(@PathVariable String id) {
+    public ResponseEntity<TimeTracker> pauseTimer(@PathVariable String id, @RequestBody Long pauseTime) {
         User user = userService.getUserById(id);
-        timeService.pauseTime(user);
+        Instant instant = Instant.ofEpochMilli(pauseTime);
+        timeService.pauseTime(user, instant);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/resume")
-    public ResponseEntity<TimeTracker> resumeTimer(@PathVariable String id) {
+    public ResponseEntity<TimeTracker> resumeTimer(@PathVariable String id, @RequestBody Long resumeTime) {
         User user = userService.getUserById(id);
-        timeService.resumeTimer(user);
+        Instant instant = Instant.ofEpochMilli(resumeTime);
+        timeService.resumeTimer(user, instant);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/stop")
-    public ResponseEntity<TimeTracker> stopTimer(@PathVariable String id) {
+    public ResponseEntity<String> stopTimer(@PathVariable String id, @RequestBody Long stopTime) {
         User user = userService.getUserById(id);
-        timeService.stopTimer(user);
-        return ResponseEntity.noContent().build();
+        Instant instant = Instant.ofEpochMilli(stopTime);
+        timeService.stopTimer(user, instant);
+        return ResponseEntity.status(200).body("Timer Stopped");
     }
 
     @PostMapping("/{id}/cancel")
