@@ -19,7 +19,6 @@ import com.tibbelin.tajmtrackr.Services.TimeService;
 import com.tibbelin.tajmtrackr.Services.UserService;
 import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
-import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
 import com.tibbelin.tajmtrackr.models.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
