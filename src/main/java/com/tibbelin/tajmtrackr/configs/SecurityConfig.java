@@ -19,14 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    private final SuccessHandler successHandler;
-    private final FailureHandler failureHandler;
-
-    public SecurityConfig(SuccessHandler successHandler, FailureHandler failureHandler) {
-        this.failureHandler = failureHandler;
-        this.successHandler = successHandler;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -34,11 +26,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
                 .cors(Customizer.withDefaults());
-
-                //  .formLogin((form) -> form
-                //  .successHandler(successHandler)
-                //  .failureHandler(failureHandler))
-                // .logout(Customizer.withDefaults());
         return http.build();
     }
 
