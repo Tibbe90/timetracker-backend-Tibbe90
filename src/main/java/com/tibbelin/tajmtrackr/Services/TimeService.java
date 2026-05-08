@@ -16,11 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tibbelin.tajmtrackr.dto.CategoryHistoryDTO;
+import com.tibbelin.tajmtrackr.dto.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.enums.TimerStatus;
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
-import com.tibbelin.tajmtrackr.models.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 /*
@@ -133,7 +133,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
     // https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html#ofInstant-java.time.Instant-java.time.ZoneId-
     public void timeCalculations(TimeTracker timeTracker, String operation, User user, Instant instant) {
         LocalDateTime start = timeTracker.getTimeStart();
-        Update update;
+        Update update;  
         TimerStatus findStatus;
 
         switch (operation) {

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,7 +37,7 @@ public class TimeTracker {
     public TimeTracker(String userId, String categoryId, Instant timeStart) {
         this.userId = userId;
         this.categoryId = categoryId;
-        this.timeStart = LocalDateTime.ofInstant(timeStart, ZoneId.systemDefault());
+        this.timeStart = LocalDateTime.ofInstant(timeStart, ZoneId.ofOffset("", ZoneOffset.UTC));
         this.status = TimerStatus.STARTED;
         this.creationDate = LocalDate.now();
         this.duration = 0L;

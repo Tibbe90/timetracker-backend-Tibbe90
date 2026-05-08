@@ -3,15 +3,16 @@ package com.tibbelin.tajmtrackr.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.Services.UserService;
+import com.tibbelin.tajmtrackr.dto.UserDurationsDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 @RestController
@@ -29,13 +30,15 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(user));
     }
 
-    // @GetMapping("/admin") 
-    // public ResponseEntity<List<User>> getAllUsers(){
-    //     return ResponseEntity.ok(userService.getAllUsers());
-    // }
+    @PostMapping("/admin") 
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserDurationsDTO>> getAllUsers(Authentication authentication){
+        return ResponseEntity.ok(userService.getAllUserDurations());
+    }
 
-    @PostMapping("/login/{username}") 
-    public ResponseEntity<User> getAllUsers(@PathVariable String username){
-        return ResponseEntity.ok(userService.getUserByName(username));
+    @PostMapping("/login") 
+    public ResponseEntity<User> login(Authentication authentication){
+        User user = userService.getUserByUsername(authentication.getName());
+        return ResponseEntity.ok(user);
     }
 }

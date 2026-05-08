@@ -1,4 +1,4 @@
-package com.tibbelin.tajmtrackr.models;
+package com.tibbelin.tajmtrackr.dto;
 
 public class UpdateCategoryDTO {
     
