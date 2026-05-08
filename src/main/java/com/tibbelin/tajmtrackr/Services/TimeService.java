@@ -22,6 +22,7 @@ import com.tibbelin.tajmtrackr.enums.TimerStatus;
 import com.tibbelin.tajmtrackr.models.Category;
 import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
+import com.tibbelin.tajmtrackr.models.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 /*
@@ -95,9 +96,9 @@ public class TimeService {
         }
         return timeTracker;
     }
-
-    public List<TimeTracker> getTrackersByCategory(String categoryId) {
-        Query findCategory = Query.query(Criteria.where("categoryId").is(categoryId));
+    
+    public List<TimeTracker> getTrackersByUser(String userId) {
+        Query findCategory = Query.query(Criteria.where("userId").is(userId));
         return mongoOperations.find(findCategory, TimeTracker.class);
     }
 
@@ -109,6 +110,12 @@ public class TimeService {
         List<CategoryHistoryDTO> categoryHistoryDTO = calculateDurations(entries, userId);
         return categoryHistoryDTO;
     }
+    
+        public void updateTimeTrackerCategory(UpdateTimeTrackerDTO timeTrackerDTO, String id) {
+        Query query = Query.query(Criteria.where("id").is(id));
+        Update update = Update.update("categoryId", timeTrackerDTO.getNewCategoryId());
+        mongoOperations.updateFirst(query, update, TimeTracker.class);
+        }
 
 private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, String userId) {
     List<Category> categories = categoryService.getMyCategories(userId);
