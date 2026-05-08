@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tibbelin.tajmtrackr.enums.Roles;
+import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
 
 @Service
@@ -24,15 +25,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if(user.getUsername().isBlank() || user.getEmail().isBlank() ||user.getPassword().isBlank()) {
+        if (user.getUsername().isBlank() || user.getEmail().isBlank() || user.getPassword().isBlank()) {
             throw new IllegalArgumentException("All fields are required");
         }
         Query queryName = Query.query(Criteria.where("username").is(user.getUsername()));
         Query queryMail = Query.query(Criteria.where("email").is(user.getEmail()));
         if (mongoOperations.exists(queryName, User.class)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        else if (mongoOperations.exists(queryMail, User.class)) {
+        } else if (mongoOperations.exists(queryMail, User.class)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,15 +41,21 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-       return mongoOperations.findAll(User.class);
+        return mongoOperations.findAll(User.class);
     }
 
     public User getUserByName(String name) {
         Query query = Query.query(Criteria.where("username").is(name));
         return mongoOperations.findOne(query, User.class);
     }
+
     public User getUserById(String id) {
         Query query = Query.query(Criteria.where("id").is(id));
         return mongoOperations.findOne(query, User.class);
+    }
+
+    public List<User> getAllUsersForAdmin() {
+        mongoOperations.findAll(TimeTracker.class);
+        return null;
     }
 }
