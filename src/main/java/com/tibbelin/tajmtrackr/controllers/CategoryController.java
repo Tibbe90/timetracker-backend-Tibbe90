@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 Info om Authentication
 https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html
 */
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin
 @RestController
@@ -56,8 +55,9 @@ public class CategoryController {
     }
 
     @PatchMapping("/category/{id}")
-    public ResponseEntity<Category> updateCategoryName(@PathVariable String id, @RequestBody UpdateCategoryDTO categoryDTO) {
-        categoryService.updateCategoryName(categoryDTO, id);
+    public ResponseEntity<Category> updateCategoryName(@PathVariable String id, @RequestBody UpdateCategoryDTO newCategoryName) {
+        System.out.println("--------------------------------------> newCategoryName: " + newCategoryName);
+        categoryService.updateCategoryName(newCategoryName, id);
         return ResponseEntity.noContent().build();
     }
 }

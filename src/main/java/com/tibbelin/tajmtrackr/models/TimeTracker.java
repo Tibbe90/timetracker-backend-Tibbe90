@@ -24,7 +24,7 @@ public class TimeTracker {
     
 
     @Id
-    private String Id;
+    private String id;
     private String userId;
     private String categoryId;
     private LocalDateTime timeStart;
@@ -45,11 +45,15 @@ public class TimeTracker {
     public TimeTracker() {}
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getCategoryId() {

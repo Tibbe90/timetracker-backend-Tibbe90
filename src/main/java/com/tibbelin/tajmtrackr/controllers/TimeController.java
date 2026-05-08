@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,8 @@ import com.tibbelin.tajmtrackr.Services.TimeService;
 import com.tibbelin.tajmtrackr.Services.UserService;
 import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
+import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
+import com.tibbelin.tajmtrackr.models.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 /*
@@ -80,16 +83,21 @@ public class TimeController {
         return ResponseEntity.ok(timeService.getActiveTimer(user));
     }
     
-    @GetMapping("/category/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<List<TimeTracker>> getTrackers(@PathVariable String id) {
-        return ResponseEntity.ok(timeService.getTrackersByCategory(id));
+        return ResponseEntity.ok(timeService.getTrackersByUser(id));
     }
 
     @GetMapping("/{id}/history")
     public ResponseEntity<List<CategoryHistoryDTO>> getHistory(@PathVariable String id){
         return ResponseEntity.ok(timeService.getCategoryHistory(id));
     }
-
+    
+    @PatchMapping("/category/{id}")
+    public ResponseEntity<TimeTracker> updateCategoryName(@PathVariable String id, @RequestBody UpdateTimeTrackerDTO timeTrackerDTO) {
+        timeService.updateTimeTrackerCategory(timeTrackerDTO, id);
+        return ResponseEntity.noContent().build();
+    }
 
     /*
     Unsure if necessary
