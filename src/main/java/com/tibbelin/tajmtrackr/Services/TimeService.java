@@ -3,6 +3,8 @@ package com.tibbelin.tajmtrackr.Services;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +142,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
 
         switch (operation) {
             case "pause":
-                LocalDateTime pause = LocalDateTime.ofInstant(instant, null);
+                LocalDateTime pause = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.UTC));
                 Long duration = start.until(pause, ChronoUnit.MILLIS);
                 update = Update.update("duration", duration)
                 .set("status", TimerStatus.PAUSED);
@@ -152,7 +154,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
                 findStatus = TimerStatus.PAUSED;
                 break;
             case "stop":
-                LocalDateTime stop = LocalDateTime.ofInstant(instant, null);
+                LocalDateTime stop = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.UTC));
                 Long finalDuration = start.until(stop, ChronoUnit.MILLIS);
                 finalDuration += timeTracker.getDuration();
                 update = Update.update("duration", finalDuration)
