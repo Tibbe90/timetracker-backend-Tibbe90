@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,7 @@ public class TimeService {
     }
 
     // https://www.mongodb.com/docs/manual/reference/operator/query/gte/?msockid=0021af1340436d161c1cb81e41146ca9
+    //criteria .gte = greater than or equal
     public List<CategoryHistoryDTO> getCategoryHistory(String userId) {
         LocalDate last30Days = LocalDate.now().minusDays(30);
         Query findDurations = Query.query(Criteria.where("userId").is(userId).and("creationDate").gte(last30Days));
@@ -138,7 +140,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
 
         switch (operation) {
             case "pause":
-                LocalDateTime pause = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Stockholm"));
+                LocalDateTime pause = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.UTC));
                 Long duration = start.until(pause, ChronoUnit.MILLIS);
                 update = Update.update("duration", duration)
                 .set("status", TimerStatus.PAUSED);
@@ -150,7 +152,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
                 findStatus = TimerStatus.PAUSED;
                 break;
             case "stop":
-                LocalDateTime stop = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Stockholm"));
+                LocalDateTime stop = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.UTC));
                 Long finalDuration = start.until(stop, ChronoUnit.MILLIS);
                 finalDuration += timeTracker.getDuration();
                 update = Update.update("duration", finalDuration)
