@@ -17,11 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tibbelin.tajmtrackr.dto.CategoryHistoryDTO;
+import com.tibbelin.tajmtrackr.dto.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.enums.TimerStatus;
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.CategoryHistoryDTO;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
-import com.tibbelin.tajmtrackr.models.UpdateTimeTrackerDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 /*
@@ -102,6 +102,7 @@ public class TimeService {
     }
 
     // https://www.mongodb.com/docs/manual/reference/operator/query/gte/?msockid=0021af1340436d161c1cb81e41146ca9
+    //criteria .gte = greater than or equal
     public List<CategoryHistoryDTO> getCategoryHistory(String userId) {
         LocalDate last30Days = LocalDate.now().minusDays(30);
         Query findDurations = Query.query(Criteria.where("userId").is(userId).and("creationDate").gte(last30Days));
@@ -137,7 +138,7 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
 
     public void timeCalculations(TimeTracker timeTracker, String operation, User user, Instant instant) {
         LocalDateTime start = timeTracker.getTimeStart();
-        Update update;
+        Update update;  
         TimerStatus findStatus;
 
         switch (operation) {

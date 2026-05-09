@@ -1,5 +1,7 @@
 package com.tibbelin.tajmtrackr.Services;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -10,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tibbelin.tajmtrackr.dto.UserDurationsDTO;
 import com.tibbelin.tajmtrackr.enums.Roles;
 import com.tibbelin.tajmtrackr.models.TimeTracker;
 import com.tibbelin.tajmtrackr.models.User;
@@ -40,12 +43,8 @@ public class UserService {
         return mongoOperations.insert(user);
     }
 
-    public List<User> getAllUsers() {
-        return mongoOperations.findAll(User.class);
-    }
-
-    public User getUserByName(String name) {
-        Query query = Query.query(Criteria.where("username").is(name));
+    public User getUserByUsername(String username) {
+        Query query = Query.query(Criteria.where("username").is(username));
         return mongoOperations.findOne(query, User.class);
     }
 
@@ -54,8 +53,21 @@ public class UserService {
         return mongoOperations.findOne(query, User.class);
     }
 
-    public List<User> getAllUsersForAdmin() {
-        mongoOperations.findAll(TimeTracker.class);
-        return null;
+    public List<UserDurationsDTO> getAllUserDurations() {
+        LocalDate last30Days = LocalDate.now().minusDays(30);
+        Query query = Query.query(Criteria.where("creationDate").gte(last30Days));
+        List<User> users = mongoOperations.findAll(User.class);
+        List<TimeTracker> timeTrackers = mongoOperations.find(query, TimeTracker.class);
+        List<UserDurationsDTO> durationsByUser = new ArrayList<>();
+
+        for (User user : users) {
+            Long getTotalDuration = timeTrackers.stream()
+            .filter(tracker -> user.getId().equals(tracker.getUserId()))
+            .mapToLong(tracker -> tracker.getDuration())
+            .sum();
+            UserDurationsDTO userDurationsDTO = new UserDurationsDTO(user.getUsername(), getTotalDuration);
+            durationsByUser.add(userDurationsDTO);
+        }
+       return durationsByUser;
     }
 }

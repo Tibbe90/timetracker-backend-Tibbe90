@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tibbelin.tajmtrackr.Services.CategoryService;
 import com.tibbelin.tajmtrackr.Services.UserService;
+import com.tibbelin.tajmtrackr.dto.UpdateCategoryDTO;
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 import org.springframework.web.bind.annotation.RequestMapping;

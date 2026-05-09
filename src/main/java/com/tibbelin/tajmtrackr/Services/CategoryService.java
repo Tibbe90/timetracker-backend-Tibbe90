@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.tibbelin.tajmtrackr.dto.UpdateCategoryDTO;
 import com.tibbelin.tajmtrackr.models.Category;
-import com.tibbelin.tajmtrackr.models.UpdateCategoryDTO;
 import com.tibbelin.tajmtrackr.models.User;
 
 @Service
