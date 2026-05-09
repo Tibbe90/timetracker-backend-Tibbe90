@@ -133,6 +133,9 @@ private List<CategoryHistoryDTO> calculateDurations(List<TimeTracker> entries, S
 
     // https://www.geeksforgeeks.org/java/localtime-until-method-in-java-with-examples/
     // https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html#ofInstant-java.time.Instant-java.time.ZoneId-
+    //
+    // turns out that trying to apply timezone just throws it off
+
     public void timeCalculations(TimeTracker timeTracker, String operation, User user, Instant instant) {
         LocalDateTime start = timeTracker.getTimeStart();
         Update update;  

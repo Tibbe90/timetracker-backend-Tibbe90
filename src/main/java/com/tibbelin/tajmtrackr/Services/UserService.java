@@ -28,15 +28,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if(user.getUsername().isBlank() || user.getEmail().isBlank() ||user.getPassword().isBlank()) {
+        if (user.getUsername().isBlank() || user.getEmail().isBlank() || user.getPassword().isBlank()) {
             throw new IllegalArgumentException("All fields are required");
         }
         Query queryName = Query.query(Criteria.where("username").is(user.getUsername()));
         Query queryMail = Query.query(Criteria.where("email").is(user.getEmail()));
         if (mongoOperations.exists(queryName, User.class)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        else if (mongoOperations.exists(queryMail, User.class)) {
+        } else if (mongoOperations.exists(queryMail, User.class)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
